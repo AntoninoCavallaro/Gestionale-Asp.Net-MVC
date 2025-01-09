@@ -1,9 +1,0 @@
-Cancellare i dati dal db dopo 2 settimane
-
-Implementare una logica di login con credenziali valide.
-
-implementare i ruoli
-
-aggiungere calendari personalizzati (graficamente) per gli appuntamenti.
-
-creare logo

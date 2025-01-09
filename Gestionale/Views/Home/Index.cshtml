@@ -1,0 +1,437 @@
+﻿@model List<ClickClok.Models.Appointment>
+
+@{
+	ViewData["Title"] = "Appuntamenti";
+}
+<!-- Controlli del carosello fuori dal carosello -->
+<div class="carousel-controls">
+	<a class="carousel-control-prev" href="#appointmentCarousel" role="button" data-slide="prev">
+		<i class="fas fa-chevron-left fa-2x"></i> <!-- Icona Font Awesome -->
+		<span class="sr-only">Precedente</span>
+	</a>
+	<a class="carousel-control-next" href="#appointmentCarousel" role="button" data-slide="next">
+		<i class="fas fa-chevron-right fa-2x"></i> <!-- Icona Font Awesome -->
+		<span class="sr-only">Successivo</span>
+	</a>
+</div>
+
+<div class="container">
+	<h1 class="text-center">DASHBOARD</h1>
+	<div class="ms-lg-5">
+		<h4>Benvenuto, @ViewData["UserName"]!</h4>
+
+		<!-- Visualizza l'ID utente memorizzato nella sessione -->
+		@if (ViewBag.UserId != null)
+		{
+			<p>ID utente dalla sessione: @ViewBag.UserId</p>
+		}
+		else
+		{
+			<p>@ViewBag.ErrorMessage</p>
+		}
+
+		<button id="openCreateModal" class="btn-create">
+			<i class="fas fa-calendar-plus"></i> Crea Appuntamento
+		</button>
+
+	</div>
+
+	<!-- Contenitore per gli alert -->
+	<div id="alert-container" class="position-fixed top-0 start-50 translate-middle-x mt-3 w-50">
+		<!-- Gli alert verranno aggiunti dinamicamente qui -->
+	</div>
+
+	<!-- Carosello per gli appuntamenti -->
+	<div id="appointmentCarousel" class="carousel slide mt-4" data-ride="false" data-interval="false">
+		<div class="carousel-inner">
+			@for (var i = 0; i < Model.Count; i += 6)
+			{
+				<div class="carousel-item @(i == 0 ? "active" : "")">
+					<div class="row m-auto p-4">
+						@for (var j = i; j < Math.Min(i + 6, Model.Count); j++)
+						{
+							var appointment = Model[j];
+							<div class="col-md-4 mb-3 ">
+								<div class="card shadow-sm appointment-card" data-id="@appointment.AppointmentId">
+									<div class="card-body">
+										<h5 class="card-title">@appointment.Description</h5>
+										<div class="appointment-info">
+											<div class="appointment-detail">
+												<span class="label">Data</span>
+												@appointment.AppointmentTime.ToShortDateString()
+											</div>
+											<div class="appointment-detail">
+												<span class="label">Orario</span>
+												@appointment.AppointmentTime.ToString("HH:mm")
+											</div>
+										</div>
+
+										<div class="appointment-detail">
+											<span class="label">Dettagli</span>
+											<div class="overflow-hidden">@appointment.Details</div>
+										</div>
+
+
+
+										<div class="action-buttons">
+											<button type="button" class="btn btn-warning btn-sm edit-btn"
+													data-id="@appointment.AppointmentId"
+													data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
+													data-description="@appointment.Description"
+													data-details="@appointment.Details">
+												<i class="fas fa-edit"></i> Modifica
+											</button>
+											<button type="button" class="btn btn-danger btn-sm delete-btn"
+													data-id="@appointment.AppointmentId"
+													data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
+													data-description="@appointment.Description"
+													data-details="@appointment.Details">
+												<i class="fas fa-trash-alt"></i> Elimina
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+		<!-- Paginazione -->
+		<ol class="carousel-indicators mt-5">
+			@foreach (var group in Model.Select((value, index) => new { value, index })
+					.GroupBy(appointment => appointment.index / 6)) // Raggruppa ogni 6 elementi
+			{
+				<li data-target="#appointmentCarousel" data-slide-to="@group.First().index / 6" class="@((group.First().index == 0) ? "active" : "")"></li>
+			}
+		</ol>
+	</div>
+</div>
+
+<!-- Modal per la conferma eliminazione -->
+<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Conferma Eliminazione</h5>
+				<button type="button" class="close" id="closeModal" aria-label="Chiudi">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Sei sicuro di voler eliminare questo appuntamento?</p>
+				<p><strong>Data:</strong> <span id="appointmentDate"></span></p>
+				<p><strong>Orario:</strong> <span id="appointmentTime"></span></p>
+				<p><strong>Descrizione:</strong> <span id="appointmentDescription"></span></p>
+				<p><strong>Dettagli:</strong> <span id="appointmentDetails"></span></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="cancelDelete">No</button>
+				<button type="button" class="btn btn-danger" id="confirmDelete">Sì</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal per la creazione -->
+<div id="createModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Crea Appuntamento</h5>
+				<button type="button" class="close" id="closeCreateModal" aria-label="Chiudi">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="createAppointmentForm">
+					<div class="form-group">
+						<label for="appointmentDateTimeInput">Data e Ora</label>
+						<input type="datetime-local" id="appointmentDateTimeInput" class="form-control" required />
+					</div>
+					<div class="form-group">
+						<label for="appointmentDescriptionInput">Descrizione</label>
+						<input type="text" id="appointmentDescriptionInput" class="form-control" required />
+					</div>
+					<div class="form-group">
+						<label for="appointmentDetailsInput">Dettagli</label>
+						<textarea id="appointmentDetailsInput" class="form-control"></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="cancelCreate">Annulla</button>
+				<button type="button" class="btn btn-primary" id="confirmCreate">Crea</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal per la modifica -->
+<div id="editModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Modifica Appuntamento</h5>
+				<button type="button" class="close" id="closeEditModal" aria-label="Chiudi">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="editAppointmentDateTime">Data e Ora:</label>
+					<input type="datetime-local" class="form-control" id="editAppointmentDateTime" required>
+				</div>
+				<div class="form-group">
+					<label for="editAppointmentDescription">Descrizione:</label>
+					<input type="text" class="form-control" id="editAppointmentDescription" required>
+				</div>
+				<div class="form-group">
+					<label for="editAppointmentDetails">Dettagli:</label>
+					<input type="text" class="form-control" id="editAppointmentDetails">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="cancelEdit">Annulla</button>
+				<button type="button" class="btn btn-primary" id="confirmEdit">Salva modifiche</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Include Bootstrap CSS and JS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+<!-- Funzione per mostrare l'alert Bootstrap -->
+<script>
+	$(document).ready(function () {
+		const message = localStorage.getItem('alertMessage');
+		const type = localStorage.getItem('alertType');
+
+		if (message) {
+			showAlert(message, type); // Mostra l'alert con il messaggio
+			localStorage.removeItem('alertMessage'); // Rimuove il messaggio per evitare ripetizioni
+			localStorage.removeItem('alertType'); // Rimuove il tipo
+		}
+	});
+
+</script>
+<script>
+	function showAlert(message, type = 'danger') {
+		const alertContainer = $('#alert-container');
+		const alert = $('<div></div>')
+			.addClass('alert')
+			.addClass('alert-' + type)
+			.text(message);
+
+		// Aggiungi l'alert al contenitore
+		alertContainer.append(alert);
+
+		// Mostra l'alert con l'animazione
+		setTimeout(() => {
+			alert.addClass('show');
+		}, 10); // Ritardo per permettere al CSS di applicare la transizione
+
+		// Nascondi e rimuovi l'alert dopo 3 secondi
+		setTimeout(() => {
+			alert.removeClass('show').addClass('hide');
+			setTimeout(() => alert.remove(), 500); // Rimuovi l'alert dal DOM dopo l'animazione
+		}, 3000);
+	}
+</script>
+
+<script>
+	$(document).ready(function () {
+		let appointmentId;
+
+		// Gestione del click sul pulsante Delete
+		$('.delete-btn').on('click', function () {
+			appointmentId = $(this).data('id');
+			$('#appointmentDate').text($(this).data('date'));
+			$('#appointmentTime').text(new Date($(this).data('time')).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+			$('#appointmentDescription').text($(this).data('description'));
+			$('#appointmentDetails').text($(this).data('details'));
+			$('#deleteModal').modal('show'); // Mostra il modale con effetto fade
+		});
+
+		// Conferma eliminazione
+		$('#confirmDelete').off('click').on('click', function () {
+			$.ajax({
+				url: '@Url.Action("DeleteConfirmed", "Home")',
+				type: 'POST',
+				data: { id: appointmentId },
+				success: function (response) {
+					if (response.success) {
+						localStorage.setItem('alertMessage', 'Appuntamento eliminato con successo.');
+						localStorage.setItem('alertType', 'success');
+						location.reload(); // Ricarica la pagina
+					} else {
+						showAlert('Errore durante l\'eliminazione dell\'appuntamento.', 'danger'); // Feedback visivo
+					}
+				},
+				error: function () {
+					alert('Si è verificato un errore durante la comunicazione con il server.');
+				}
+			});
+		});
+
+		// Annulla eliminazione e chiudi il modale
+		$('#cancelDelete').on('click', function () {
+			$('#deleteModal').modal('hide'); // Chiude il modale
+		});
+
+		// Chiusura del modale con la "X" in alto a destra
+		$('#closeModal').on('click', function () {
+			$('#deleteModal').modal('hide'); // Chiude il modale
+		});
+
+		// Aggiungi effetto di fade al mostrare il modale
+		$('#deleteModal').on('shown.bs.modal', function () {
+			$(this).addClass('show');
+		});
+		$('#deleteModal').on('hidden.bs.modal', function () {
+			$(this).removeClass('show');
+		});
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		// Gestione apertura modale per la creazione
+		$('#openCreateModal').on('click', function () {
+			const now = new Date().toISOString().slice(0, 16); // Ottieni la data e ora attuale nel formato ISO (senza secondi)
+			$('#appointmentDateTimeInput').attr('min', now); // Imposta il minimo sul campo datetime-local
+			$('#createModal').modal('show');
+		});
+
+		// Gestione creazione appuntamento
+		$('#confirmCreate').on('click', function () {
+			const appointmentTime = $('#appointmentDateTimeInput').val();
+			if (!appointmentTime || new Date(appointmentTime) <= new Date()) {
+				showAlert('Per favore, fornisci una data e ora future valide.', 'danger');
+				return;
+			}
+
+			const appointmentData = {
+				AppointmentTime: appointmentTime,
+				Description: $('#appointmentDescriptionInput').val(),
+				Details: $('#appointmentDetailsInput').val()
+			};
+
+			$.ajax({
+				url: '@Url.Action("Create", "Home")',
+				type: 'POST',
+				data: JSON.stringify(appointmentData),
+				contentType: 'application/json',
+				success: function (response) {
+					if (response.success) {
+						localStorage.setItem('alertMessage', 'Appuntamento creato con successo.');
+						localStorage.setItem('alertType', 'success');
+						location.reload(); // Ricarica la pagina
+					} else {
+						showAlert(response.message || 'Si è verificato un errore.', 'danger'); // Feedback visivo
+					}
+				},
+				error: function () {
+					showAlert('Errore durante la comunicazione con il server.', 'danger'); // Feedback visivo
+				}
+			});
+		});
+
+		// Gestione annullamento e chiusura modale
+		$('#cancelCreate, #closeCreateModal').on('click', function () {
+			$('#createModal').modal('hide');
+		});
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		let appointmentId;
+
+		// Gestione del click sul pulsante "Modifica"
+		$('.edit-btn').on('click', function () {
+			appointmentId = $(this).data('id');
+
+			// Usa direttamente il valore di data-time formattato nel formato ISO
+			const appointmentDateTime = $(this).data('time'); // Il valore è già nel formato corretto
+
+			// Ottieni la data e l'ora attuale nel formato ISO (senza secondi)
+			const now = new Date().toISOString().slice(0, 16);
+
+			// Imposta il valore minimo sul campo datetime-local
+			$('#editAppointmentDateTime').attr('min', now);
+
+			// Popola i campi del modale con i dati esistenti
+			$('#editAppointmentDescription').val($(this).data('description'));
+			$('#editAppointmentDateTime').val(appointmentDateTime);
+			$('#editAppointmentDetails').val($(this).data('details'));
+
+			// Mostra il modale
+			$('#editModal').modal('show');
+		});
+
+		// Conferma la modifica dell'appuntamento
+		$('#confirmEdit').on('click', function () {
+			const appointmentTime = $('#editAppointmentDateTime').val();
+			if (!appointmentTime || new Date(appointmentTime) <= new Date()) {
+				showAlert('Per favore, inserisci una data e un orario futuri validi.', 'danger');
+				return;
+			}
+
+			const updatedAppointment = {
+				AppointmentId: appointmentId,
+				Description: $('#editAppointmentDescription').val(),
+				AppointmentTime: appointmentTime,
+				Details: $('#editAppointmentDetails').val()
+			};
+
+			// Invio dei dati aggiornati al server
+			$.ajax({
+				url: '@Url.Action("EditConfirmed", "Home")',
+				type: 'POST',
+				data: updatedAppointment,
+						success: function (response) {
+						if (response.success) {
+							const formattedDate = new Date(updatedAppointment.AppointmentTime).toLocaleDateString('it-IT');
+							const formattedTime = new Date(updatedAppointment.AppointmentTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+							// Aggiorna la visualizzazione sulla pagina
+							$('tr[data-id="' + appointmentId + '"]').find('.appointment-description').text(updatedAppointment.Description);
+							$('tr[data-id="' + appointmentId + '"]').find('.appointment-date').text(formattedDate);
+							$('tr[data-id="' + appointmentId + '"]').find('.appointment-time').text(formattedTime);
+							$('tr[data-id="' + appointmentId + '"]').find('.appointment-details').text(updatedAppointment.Details);
+
+							localStorage.setItem('alertMessage', 'Appuntamento aggiornato con successo.');
+							localStorage.setItem('alertType', 'success');
+							location.reload(); // Ricarica la pagina per aggiornare la lista appuntamenti
+						} else {
+							showAlert('Errore durante l\'aggiornamento dell\'appuntamento.', 'danger'); // Feedback visivo
+						}
+					},
+					error: function () {
+						showAlert('Errore durante la comunicazione con il server.', 'danger'); // Feedback visivo
+					}
+			});
+		});
+
+		// Annulla la modifica e chiudi il modale
+		$('#cancelEdit').on('click', function () {
+			$('#editModal').modal('hide'); // Chiude il modale
+		});
+
+		// Chiudi il modale con il pulsante "X" in alto a destra
+		$('#closeEditModal').on('click', function () {
+			$('#editModal').modal('hide'); // Chiude il modale
+		});
+
+		// Aggiungi un effetto di fade alla visualizzazione del modale
+		$('#editModal').on('shown.bs.modal', function () {
+			$(this).addClass('show');
+		});
+		$('#editModal').on('hidden.bs.modal', function () {
+			$(this).removeClass('show');
+		});
+	});
+</script>

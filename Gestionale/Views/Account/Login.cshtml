@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+@{
+    ViewData["CurrentPage"] = "Login";
+}
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Header Moderno -->
+            <div class="text-white text-center p-4 rounded mb-4">
+                <h2>Benvenuto</h2>
+                <p>Accedi per continuare</p>
+            </div>
+
+            <!-- Form con nuovi stili -->
+            <div class="bg-white p-4 rounded shadow-sm">
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger show" role="alert">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <input type="text" class="form-control custom-input" id="name" name="name" placeholder="Inserisci il tuo username" required>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <input type="password" class="form-control custom-input" id="password" name="password" placeholder="Inserisci la tua password" required>
+                    </div>
+
+                    <!-- Pulsante (non toccato) -->
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-accedi">
+                            <span><i class="fas fa-lock"></i> Accedi</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

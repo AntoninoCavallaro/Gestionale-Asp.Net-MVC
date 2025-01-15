@@ -5,14 +5,13 @@
     ViewData["CurrentPage"] = "Login";
 }
 
-
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <!-- Header Moderno -->
-            <div class="text-white text-center p-4 rounded mb-4">
-                <h2>Benvenuto</h2>
-                <p>Accedi per continuare</p>
+            <div class="text-center p-4 rounded mb-4">
+                <h1 id="welcome-title" class="text-center">BENVENUTO</h1>
+                <p id="p">Accedi o registrati per continuare</p>
             </div>
 
             <!-- Form con nuovi stili -->
@@ -43,6 +42,123 @@
                     </div>
                 </form>
             </div>
+            <!-- Pulsante per aprire il modale di registrazione -->
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-gradient rounded-pill px-4 py-2" data-bs-toggle="modal" data-bs-target="#registerModal">
+                    <i class="fas fa-user-plus me-2"></i> Registrati ora
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<div id="registerModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Inserisci i Dati</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Chiudi">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form di registrazione -->
+                <div id="registerErrorMessage" class="alert alert-danger" style="display: none;"></div>
+                <div id="registerSuccessMessage" class="alert alert-success" style="display: none;"></div>
+
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="registerUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="registerUsername" placeholder="Inserisci il tuo username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="registerPassword" placeholder="Inserisci la tua password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerConfirmPassword" class="form-label">Conferma Password</label>
+                        <input type="password" class="form-control" id="registerConfirmPassword" placeholder="Conferma la tua password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-gradient m-auto" id="confirmRegister">Registrati</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Gestione della registrazione tramite AJAX
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        event.preventDefault();  // Preveniamo l'invio normale del form
+    });
+
+    document.getElementById("confirmRegister").addEventListener("click", function () {
+
+        var username = document.getElementById("registerUsername").value;
+        var password = document.getElementById("registerPassword").value;
+        var confirmPassword = document.getElementById("registerConfirmPassword").value;
+
+        // Reset di eventuali evidenziazioni
+        document.getElementById("registerUsername").classList.remove("is-invalid");
+
+        // Verifica se le password corrispondono
+        if (password !== confirmPassword) {
+            showMessage("Le password non corrispondono.", "danger");
+            return;
+        }
+
+        var data = {
+            username: username,
+            password: password
+        };
+
+        // Utilizzo del fetch per la registrazione
+            fetch('@Url.Action("Register", "Account")', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(function (response) {
+            const successMessageElement = document.getElementById('registerSuccessMessage');
+            const errorMessageElement = document.getElementById('registerErrorMessage');
+
+            // Reset messaggi precedenti
+            successMessageElement.style.display = 'none';
+            errorMessageElement.style.display = 'none';
+
+            if (response.success) {
+
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                    modal.hide();
+
+                    // Mostrare un popup con SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Registrazione completata!',
+                        text: 'Benvenuto! Ora puoi accedere al tuo account.',
+                        showConfirmButton: false, // Nasconde il pulsante "OK"
+                        timer: 2500, // Chiude il popup automaticamente dopo x secondi
+                        timerProgressBar: true // Mostra una barra di progresso
+                    });
+                });
+            }
+        })
+        .catch(function () {
+            const errorMessageElement = document.getElementById('registerErrorMessage');
+            errorMessageElement.textContent = 'Si è verificato un errore durante la comunicazione con il server.';
+            errorMessageElement.style.display = 'block';
+        });
+
+    });
+
+
+</script>
+
+

@@ -15,13 +15,17 @@ namespace ClickClok.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configura la relazione come opzionale (se necessario)
+            // Configura la relazione tra Appointment e User
             modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.User)
-                .WithMany()
-                .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Imposta il comportamento di eliminazione, se necessario
-        }
+                .HasOne(a => a.User) // La proprietà di navigazione
+                .WithMany(u => u.Appointments) // La collezione nel lato User
+                .HasForeignKey(a => a.UserId) // La chiave esterna
+                .OnDelete(DeleteBehavior.Cascade); // Comportamento di eliminazione
 
+            // Configura Username come case-insensitive per SQLite
+            modelBuilder.Entity<User>()
+                .Property(u => u.Username)
+                .HasColumnType("TEXT COLLATE NOCASE"); // Usa NOCASE per case-insensitivity
+        }
     }
 }

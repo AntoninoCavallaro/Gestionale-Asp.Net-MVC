@@ -45,10 +45,26 @@ using (var scope = app.Services.CreateScope())
     {
         var users = new List<User>
         {
-            new User { Username = "mario", Password = "mario1", IsPaid = true },
-            new User { Username = "lucia", Password = "lucia2", IsPaid = false },
-            new User { Username = "marco", Password = "marco3", IsPaid = true }
+            new User
+            {
+                Username = "mario",
+                Salt = "3b0b0d23-e401-478f-bf85-944a2095a362", // Usa lo stesso salt salvato per il login
+                Password = PasswordHelper.HashPassword("mario1", "3b0b0d23-e401-478f-bf85-944a2095a362") // Usa lo stesso salt per calcolare l'hash
+            },
+            new User
+            {
+                Username = "lucia",
+                Salt = "4fa35150-5b0b-41f1-b6b0-e6164d1a1c6b", // Usa lo stesso salt salvato per il login
+                Password = PasswordHelper.HashPassword("lucia2", "4fa35150-5b0b-41f1-b6b0-e6164d1a1c6b") // Usa lo stesso salt per calcolare l'hash
+            },
+            new User
+            {
+                Username = "marco",
+                Salt = "35f146fb-321b-401e-b9e1-4093134e8485", // Usa lo stesso salt salvato per il login
+                Password = PasswordHelper.HashPassword("marco3", "35f146fb-321b-401e-b9e1-4093134e8485") // Usa lo stesso salt per calcolare l'hash
+            }
         };
+
         context.Users.AddRange(users);
         context.SaveChanges();
     }

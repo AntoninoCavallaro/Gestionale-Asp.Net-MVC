@@ -1,3 +1,31 @@
+:root {
+    --color-success-bg: #d4edda;
+    --color-success-text: #155724;
+    --color-success-border: #c3e6cb;
+    --color-danger-bg: #f8d7da;
+    --color-danger-text: #721c24;
+    --color-danger-border: #f5c6cb;
+    --color-black: black;
+    --color-white: white;
+    --color-shadow-light: rgba(0, 0, 0, 0.1);
+    --color-shadow-dark: rgba(0, 0, 0, 0.5);
+    --color-primary: #6c5ce7;
+    --color-secondary: #8578ea;
+    --color-tertiary: #aed1ef;
+    --color-quaternary: #c5aef2;
+    --color-text-dark: #333333;
+    --color-text-light: #ffffff;
+    --color-background-light: #f7f7f7;
+    --color-background-dark: #f8f9fa;
+    --color-placeholder: #888;
+    --color-border: #ccc;
+    --color-border-focus: #995ecc;
+    --color-focus-background: #f4f7ff;
+    --color-gradient-start: #aed1ef;
+    --color-gradient-middle: #c5aef2;
+    --color-gradient-end: #8578ea;
+}
+
 html {
     font-size: 14px !important;
 }
@@ -8,9 +36,8 @@ html {
     }
 }
 
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb !important;
+.btn-check:focus + .btn, .btn:focus {
+    box-shadow: none;
 }
 
 html {
@@ -20,13 +47,12 @@ html {
 
 body {
     margin-bottom: 60px !important;
-    background: linear-gradient(90deg, #aed1ef, #c5aef2, #8578ea);
-    background-size: 400% 400%; /* Aumenta la dimensione per un effetto più fluido */
+    background: linear-gradient(90deg, var(--color-tertiary), var(--color-quaternary), var(--color-secondary));
+    background-size: 400% 400%;
     animation: gradient-rotation 12s infinite linear;
-    color: white; /* Per migliorare la leggibilità del testo su uno sfondo scuro */
+    color: var(--color-text-light);
 }
 
-/* Definizione dell'animazione */
 @keyframes gradient-rotation {
     0% {
         background-position: 0% 50%;
@@ -41,122 +67,135 @@ body {
     }
 }
 
-
 .btn-logout {
     position: relative !important;
     padding: 10px 20px !important;
     font-weight: bold !important;
-    color: #333 !important; /* Colore del testo */
-    background-color: #f8f9fa !important; /* Colore di sfondo */
-    border-radius: 50px !important; /* Bordo arrotondato */
-    transition: all 0.3s ease-in-out !important; /* Transizione fluida */
+    color: var(--color-text-dark) !important;
+    background-color: var(--color-background-dark) !important;
+    border-radius: 50px !important;
+    transition: all 0.3s ease-in-out !important;
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important; /* Distanza tra icona e testo */
+    gap: 8px !important;
     text-transform: uppercase !important;
 }
 
     .btn-logout i {
-        font-size: 18px !important; /* Dimensione dell'icona */
-        transition: transform 0.3s ease !important; /* Transizione fluida per l'icona */
+        font-size: 18px !important;
+        transition: transform 0.3s ease !important;
     }
 
     .btn-logout:hover {
-        color: #fff !important; /* Colore del testo al passaggio del mouse */
-        background-color: #6c5ce7 !important; /* Colore di sfondo su hover */
-        border-color: #6c5ce7 !important; /* Colore del bordo su hover */
-        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3) !important; /* Ombra moderna */
+        color: var(--color-text-light) !important;
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3) !important;
     }
 
         .btn-logout:hover i {
-            transform: translateX(5px) !important; /* Movimento dell'icona su hover */
+            transform: translateX(5px) !important;
         }
 
-
-h1 {
+/* Classe comune per le regole condivise */
+#dashboard-title, #welcome-title {
     font-size: 2.3rem !important;
     text-align: center !important;
     position: relative !important;
-    background: linear-gradient(90deg, #aed1ef, #c5aef2, #8578ea);
+    background: linear-gradient(90deg, var(--color-tertiary), var(--color-quaternary), var(--color-secondary));
     background-clip: text;
     -webkit-background-clip: text;
     font-weight: bold !important;
     color: transparent !important;
-    background-size: 200% 200% ; /* Aumenta la dimensione del gradiente */
-    animation: gradient-text 12s infinite linear ; /* Animazione del gradiente */
+    background-size: 200% 200%;
+    animation: gradient-text 12s infinite linear;
+    padding: 0.2rem;
 }
 
-    h1::before {
-        content: "DASHBOARD" !important; /* Testo duplicato */
+    /* Stili comuni per il pseudo-elemento ::before */
+    #dashboard-title::before, #welcome-title::before {
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        z-index: -1 !important; /* Manda l'ombra dietro il testo */
-        color: rgba(0, 0, 0, 0.5) !important; /* Colore dell'ombra */
-        filter: blur(3px) !important; /* Sfocatura per simulare l'ombra */
-        transform: translate(2px, 2px) !important; /* Posizionamento simile all'ombra */
+        z-index: -1 !important;
+        color: rgba(0, 0, 0, 0.5) !important;
+        filter: blur(3px) !important;
+        transform: translate(2px, 2px) !important;
+        padding: 0.2rem;
     }
+
+    /* Specifico per il titolo dashboard */
+    #dashboard-title::before {
+        content: "DASHBOARD" !important;
+    }
+
+    /* Specifico per il titolo benvenuto */
+    #welcome-title::before {
+        content: "BENVENUTO" !important;
+    }
+
+
+#p {
+    color: var(--color-placeholder) !important;
+}
 
 @keyframes gradient-text {
     0% {
-        background-position: 0% 50% ;
+        background-position: 0% 50%;
     }
 
     50% {
-        background-position: 100% 50% ;
+        background-position: 100% 50%;
     }
 
     100% {
-        background-position: 0% 50% ;
+        background-position: 0% 50%;
     }
 }
 
 h4 {
-    font-size: 1.5rem; /* Dimensione del font, mantiene la leggibilità */
-    font-weight: 500; /* Peso del font non troppo pesante, ma visibile */
-    text-align: left; /* Allineamento a sinistra */
-    color: #333333; /* Colore grigio scuro per un aspetto più morbido rispetto al nero */
-    letter-spacing: 0.5px; /* Distanza tra le lettere per una maggiore leggibilità */
-    margin-bottom: 20px; /* Spazio sotto l'elemento */
-    text-transform: capitalize; /* Capitalizza solo la prima lettera di ogni parola */
-    line-height: 1.6; /* Interlinea per migliorare la leggibilità */
-    transition: color 0.3s ease, transform 0.3s ease; /* Transizione fluida per hover */
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: left;
+    color: var(--color-text-dark);
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+    line-height: 1.6;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
     h4:hover {
-        color: #6c5ce7; /* Colore di hover elegante (blu/viola chiaro) */
-        transform: translateX(5px); /* Leggero spostamento orizzontale al passaggio del mouse */
+        color: var(--color-primary);
+        transform: translateX(5px);
     }
 
-
-
-/* Barra di navigazione personalizzata */
 .custom-nav {
-    background: linear-gradient(90deg, #aed1ef, #c5aef2, #8578ea);
+    background: linear-gradient(90deg, var(--color-tertiary), var(--color-quaternary), var(--color-secondary));
     padding: 10px 20px;
-    background-size: 400% 400%; /* Aumenta la dimensione per un effetto più fluido */
+    background-size: 400% 400%;
     animation: gradient-rotation 12s infinite linear;
     font-size: 1.5rem;
 }
 
 .navbar-brand {
-    font-size: 2.3rem !important; /* Aumenta la dimensione del font */
-    font-weight: bold; /* Assicura che il testo sia in grassetto */
-    color: #ffffff !important; /* Colore bianco per il testo */
-    letter-spacing: 2px; /* Aggiunge uno spazio tra le lettere */
+    font-size: 2.3rem !important;
+    font-weight: bold;
+    color: var(--color-text-light) !important;
+    letter-spacing: 2px;
 }
-
 
 .navbar-toggler {
     border: none;
 }
 
 .navbar-toggler-icon {
-    color: white;
-    background-color: white;
+    color: var(--color-text-light);
+    background-color: var(--color-text-light);
 }
+
 .modal {
     z-index: 1049 !important;
 }
@@ -164,7 +203,7 @@ h4 {
 .appointment-card {
     position: relative !important;
     width: 100% !important;
-    height: 250px !important; /* Fissa un'altezza per le card */
+    height: 250px !important;
     display: flex !important;
     flex-direction: column !important;
     transition: transform 0.4s ease, box-shadow 0.4s ease !important;
@@ -173,73 +212,70 @@ h4 {
 
 .card-body h5 {
     text-align: center;
-    padding: 0 10px; /* Padding per separare meglio l'etichetta dal testo */
+    padding: 0 10px;
     font-weight: bold;
-    color: #333; /* Colore distintivo per le etichette */
-    font-size: 1rem; /* Piccola dimensione per le etichette */
-    border-radius: 4px; /* Bordi arrotondati per le etichette */
-
+    color: var(--color-text-dark);
+    font-size: 1rem;
+    border-radius: 4px;
 }
 
-    .appointment-card:hover {
-        transform: scale(1.05) !important;
-        z-index: 10 !important; /* Assicurati che la card ingrandita non influisca sulle altre */
-        box-shadow: 0 10px 13px rgba(0, 0, 0, 0.5) !important; /* Ombra più marcata */
-    }
+.appointment-card:hover {
+    transform: scale(1.05) !important;
+    z-index: 10 !important;
+    box-shadow: 0 10px 13px var(--color-shadow-dark) !important;
+}
 
 .card-body {
-    flex-grow: 1 !important; /* Questo assicura che il contenuto della card occupi tutto lo spazio disponibile */
-    padding-bottom: 40px !important; /* Spazio per evitare che i pulsanti si sovrappongano al contenuto */
-    padding-top: 10px !important; /* Spazio per evitare che i pulsanti si sovrappongano al contenuto */
+    flex-grow: 1 !important;
+    padding-bottom: 40px !important;
+    padding-top: 10px !important;
 }
 
 .appointment-info {
     text-align: center;
-    display: flex; /* Disporre gli elementi orizzontalmente */
-    justify-content: space-between; /* Aggiunge spazio tra gli elementi */
-    align-items: flex-start; /* Allinea gli elementi nella parte superiore */
-    margin-bottom: 15px; /* Spazio sotto l'elemento */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
     padding: 10px;
 }
 
 .appointment-detail {
-    background-color: #f7f7f7; /* Colore di sfondo chiaro */
-    border-radius: 8px; /* Bordi arrotondati */
+    background-color: var(--color-background-light);
+    border-radius: 8px;
     font-size: 1rem;
-    font-weight: 400; /* Peso normale per i dettagli */
-    color: #333333; /* Colore del testo */
-    padding: 10px 15px; /* Distanziamento interno */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombra leggera */
+    font-weight: 400;
+    color: var(--color-text-dark);
+    padding: 10px 15px;
+    box-shadow: 0 2px 5px var(--color-shadow-light);
     transition: all 0.3s ease;
-    flex-basis: 48%; /* Mantieni Data e Orario con larghezza controllata */
-    position: relative; /* Per permettere il posizionamento assoluto delle etichette */
+    flex-basis: 48%;
+    position: relative;
     height: 50%;
-    width: 100%; /* Imposta la larghezza al 100% */
-    max-width: 100%; /* Limita la larghezza massima all'80% */
-    margin: 0 auto; /* Centra il riquadro */
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .overflow-hidden {
-    display: -webkit-box; /* Usa un contenitore a blocco flessibile per il testo */
-    -webkit-line-clamp: 2; /* Limita il testo a due righe */
-    -webkit-box-orient: vertical; /* Orienta il testo verticalmente */
-    overflow: hidden; /* Nasconde il testo in eccesso */
-    text-overflow: ellipsis; /* Aggiunge i puntini di sospensione */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-
-
 .appointment-detail .label {
-    position: absolute; /* Posizionamento assoluto per staccare l'etichetta dal riquadro */
-    top: -10px; /* Posiziona l'etichetta sopra il riquadro */
-    left: 50%; /* Posiziona l'etichetta al centro */
-    transform: translateX(-50%); /* Centra l'etichetta orizzontalmente */
-    background-color: #f7f7f7; /* Colore di sfondo per separare l'etichetta dal riquadro */
-    padding: 0 10px; /* Padding per separare meglio l'etichetta dal testo */
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-background-light);
+    padding: 0 10px;
     font-weight: bold;
-    color: #6c5ce7; /* Colore distintivo per le etichette */
-    font-size: 0.9rem; /* Piccola dimensione per le etichette */
-    border-radius: 4px; /* Bordi arrotondati per le etichette */
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    border-radius: 4px;
 }
 
 .appointment-detail:last-child {
@@ -250,23 +286,20 @@ h4 {
     background-color: #e7e7e7 !important;
 }
 
-/* Nascondi i pulsanti di default */
 .action-buttons {
     position: absolute !important;
-    bottom: 10px !important; /* Posiziona i pulsanti sul fondo della card */
+    bottom: 10px !important;
     left: 10px !important;
-    width: calc(100% - 20px) !important; /* Lascia uno spazio ai lati */
+    width: calc(100% - 20px) !important;
     display: flex !important;
     justify-content: space-between !important;
-    opacity: 0; /* Nascondi i pulsanti inizialmente */
-    transition: opacity 0.3s ease; /* Aggiungi transizione per l'appearing */
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Mostra i pulsanti quando la card è in hover */
 .appointment-card:hover .action-buttons {
-    opacity: 1; /* Rendi visibili i pulsanti */
+    opacity: 1;
 }
-
 
 .btn-sm {
     font-size: 0.75rem !important;
@@ -279,15 +312,15 @@ h4 {
 
 .alert {
     text-align: center !important;
-    position: fixed !important; /* Posiziona gli alert in alto per renderli più visibili */
+    position: fixed !important;
     top: 10px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     max-width: 90% !important;
     padding: 15px !important;
-    z-index: 1050 !important; /* Sopra gli altri elementi */
+    z-index: 1050 !important;
     opacity: 0 !important;
-    pointer-events: none !important; /* Evita interazioni durante l'animazione */
+    pointer-events: none !important;
     transition: opacity 0.5s ease, transform 0.5s ease !important;
 }
 
@@ -301,80 +334,87 @@ h4 {
     .alert.hide {
         opacity: 0 !important;
         pointer-events: none !important;
-        transform: translateX(-50%) translateY(-20px) !important; /* Leggero spostamento verso l'alto */
-        transition: opacity 0.5s ease, transform 0.5s ease !important;
+        transform: translateX(-50%) translateY(-20px) !important;
+        transition: opacity 0.3s ease !important;
     }
 
+
+/* Success alert */
 .alert-success {
-    background-color: #d4edda !important;
-    color: #155724 !important;
-    border: 1px solid #c3e6cb !important;
+    background-color: var(--color-success-bg) !important;
+    color: var(--color-success-text) !important;
+    border: 1px solid var(--color-success-border) !important;
     border-radius: 4px !important;
 }
 
+/* Danger alert */
 .alert-danger {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    border: 1px solid #f5c6cb !important;
+    background-color: var(--color-danger-bg) !important;
+    color: var(--color-danger-text) !important;
+    border: 1px solid var(--color-danger-border) !important;
     border-radius: 4px !important;
 }
 
+/* Carousel Controls */
 .carousel-control-prev, .carousel-control-next {
-    z-index: 9999 !important; /* Imposta il massimo z-index per garantire che siano sopra gli altri contenuti */
+    z-index: 9999 !important;
 }
 
 .carousel-control-prev-icon, .carousel-control-next-icon {
-    background-color: black !important; /* Colore delle frecce in bianco per contrastare con il nero */
+    background-color: var(--color-black) !important;
 }
+
 .carousel-indicators li {
-    background-color: black !important; /* Colore degli indicatori di pagina */
+    background-color: var(--color-black) !important;
 }
+
 .carousel-controls {
-    position: fixed; /* Posizionamento fisso */
-    top: 50%; /* Centra verticalmente */
-    left: 0; /* Posiziona il controllo sinistro */
-    width: 100%; /* Allunga i controlli su tutta la larghezza */
-    display: flex; /* Per allineare i controlli */
-    justify-content: space-between; /* Allinea i controlli alle estremità */
-    transform: translateY(-50%); /* Allinea perfettamente al centro verticale */
-    pointer-events: none; /* Permette di cliccare solo sui bottoni */
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
     .carousel-controls a {
-        pointer-events: auto; /* Rende cliccabili i bottoni */
-        z-index: 1050; /* Assicura che siano sopra al contenuto */
+        pointer-events: auto;
+        z-index: 1050;
     }
+
         .carousel-controls a i {
-            color: black; /* Imposta il colore nero per le icone */
+            color: var(--color-black);
         }
 
 .carousel-inner {
-    transition: transform 0.3s ease-in-out !important; /* Tempo di transizione ridotto */
+    transition: transform 0.3s ease-in-out !important;
 }
 
+/* Gradient button */
 .btn-accedi {
-    background: linear-gradient(90deg, #5e6dcc, #bc89d1, #9f78c1);
-    background-size: 400% 400%; /* Aumenta la dimensione per un effetto più fluido */
-    color: white;
+    background: linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-middle), var(--color-gradient-end));
+    background-size: 200% 200%;
+    color: var(--color-text-dark);
     border: none;
-    padding: 12px 20px;
+    padding: 12px 18px;
     font-size: 1rem;
     border-radius: 8px;
     width: 100%;
     cursor: pointer;
-    transition: transform 0.3s ease; /* Rimosso il transition per il background */
+    transition: transform 0.3s ease;
     text-transform: uppercase;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Impedisce che il testo esca dal bottone */
-    white-space: nowrap; /* Evita che il testo vada a capo */
-    letter-spacing: 2px; /* Distanziamento delle lettere durante l'hover */
-    animation: gradientAnim 4s infinite linear; /* Applicazione dell'animazione del gradiente */
+    overflow: hidden;
+    white-space: nowrap;
+    letter-spacing: 2px;
+    animation: gradientAnim 4s infinite linear;
     font-weight: bold;
 }
 
-/* Definizione dell'animazione per il pulsante */
 @keyframes gradientAnim {
     0% {
         background-position: 0% 50%;
@@ -391,129 +431,104 @@ h4 {
 
 .btn-accedi span {
     display: inline-block;
-    transition: transform 0.5s ease; /* Transizione per il testo */
+    transition: transform 0.5s ease;
 }
 
-.btn-accedi:hover {
-    color: white;
+.btn-accedi:hover span {
+    transform: scale(30);
+    transition: transform 1s cubic-bezier(0.5, 0, 0.2, 1);
 }
 
-    .btn-accedi:hover span {
-        transform: scale(30); /* Ingrandimento del testo */
-        transition: transform 1s cubic-bezier(0.5, 0, 0.2, 1); /* Ingrandimento più veloce con un'entrata accelerata */
+/* Stile del pulsante */
+.btn-gradient {
+    background: linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-middle), var(--color-gradient-end));
+    background-size: 400% 400%; /* Per consentire il movimento del gradiente */
+    animation: gradientAnim 4s infinite linear; /* Animazione del gradiente */
+    color: var(--color-text-dark) !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    padding: 12px 18px !important; /* Spaziatura interna */
+    border-radius: 50px !important; /* Arrotondamento del pulsante */
+    cursor: pointer !important; /* Cambia il cursore al passaggio */
+    border: 2px solid transparent !important; /* Imposta un bordo trasparente di base */
+    box-sizing: border-box; /* Includi il bordo nelle dimensioni dell'elemento */
+}
+
+    /* Effetto hover */
+    .btn-gradient:hover {
+        border-color: var(--color-gradient-middle) !important; /* Cambia il colore del bordo */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important; /* Ombreggiatura */
     }
 
-/* Personalizzazione dei campi di input */
+/* Custom input field */
 .custom-input {
     border-radius: 8px !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--color-border) !important;
     padding: 12px 16px !important;
     font-size: 1rem !important;
-    background-color: #f9f9f9 !important;
-    color: #333 !important;
+    background-color: var(--color-background-light) !important;
+    color: var(--color-text-dark) !important;
     transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease, background-color 0.3s ease !important;
     width: 100% !important;
     box-sizing: border-box !important;
 }
 
-    /* Stile per l'input al focus */
     .custom-input:focus {
-        border-color: #5e6dcc !important;
+        border-color: var(--color-border-focus) !important;
         box-shadow: 0 0 8px rgba(108, 92, 231, 0.8) !important;
         outline: none !important;
-        background-color: #f4f7ff !important;
+        background-color: var(--color-focus-background) !important;
         transform: translateY(-2px) !important;
         animation: input-focus-animation 0.3s ease-in-out !important;
-        
     }
 
+    .custom-input::placeholder {
+        color: var(--color-placeholder) !important;
+        font-style: italic !important;
+        transition: color 0.3s ease !important;
+    }
 
-/* Placeholder stilizzato */
-.custom-input::placeholder {
-    color: #888 !important;
-    font-style: italic !important;
-    transition: color 0.3s ease !important;
-}
-
-/* Stato del placeholder durante il focus */
     .custom-input:focus::placeholder {
-        color: #5e6dcc !important;
+        color: var(--color-border-focus) !important;
     }
 
-/* Responsività per input sui dispositivi mobili */
-@media (max-width: 768px) {
-    .custom-input {
-        font-size: 0.9rem !important;
-        padding: 10px 12px !important;
-    }
-}
-
-
-/* Stile del titolo */
-.text-center h2 {
-    text-transform: uppercase;
-    font-size: 2rem !important;
-    font-weight: bold !important;
-    color: #333 !important;
-}
-
-.text-center p {
-    font-size: 1rem !important;
-    color: #777 !important;
-}
-
-/* Stile del form container */
-.bg-white {
-    border-radius: 12px !important;
+/* Modal content */
+.modal-content {
+    border-radius: 10px !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--color-white) !important;
+    padding: 20px !important;
+    transition: transform 0.3s ease, opacity 0.3s ease !important;
+    z-index: 9999 !important;
 }
 
-/* Margine inferiore per separare i campi */
-.mb-3 {
-    margin-bottom: 20px !important;
-}
-
-/* Per l'alert (errore) */
-.alert {
-    margin-bottom: 20px !important;
-}
-
-/* Stili di base del pulsante */
+/* Button styles */
 .btn-create {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 12px 20px;
     font-size: 1rem;
-    border-radius: 50px; /* Bordo arrotondato */
-    border: 2px solid transparent; /* Bordo inizialmente invisibile */
-    background-color: #6c5ce7; /* Colore di sfondo principale */
-    color: #ffffff; /* Colore del testo */
+    border-radius: 50px;
+    border: 2px solid transparent;
+    background-color: var(--color-primary);
+    color: var(--color-white);
     font-weight: bold;
     text-transform: uppercase;
-    transition: all 0.3s ease; /* Transizione per animazioni fluide */
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-    /* Icona con uno spazio tra il testo e l'icona */
-    .btn-create i {
-        margin-right: 10px;
-        font-size: 1.2rem; /* Dimensione dell'icona */
-    }
-
-    /* Effetto hover */
     .btn-create:hover {
-        background-color: #5a4fcf; /* Colore di sfondo più scuro */
-        border-color: #6c5ce7; /* Colore del bordo al passaggio del mouse */
-        transform: translateY(-4px); /* Leggera elevazione del pulsante */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra per un effetto flottante */
+        background-color: #5a4fcf;
+        border-color: var(--color-primary);
+        transform: translateY(-4px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    /* Effetto active (quando il pulsante è premuto) */
     .btn-create:active {
-        background-color: #4e3bbf; /* Colore ancora più scuro */
-        transform: translateY(2px); /* Pulsante che sembra premuto */
-        box-shadow: none; /* Rimuove l'ombra */
+        background-color: #4e3bbf;
+        transform: translateY(2px);
+        box-shadow: none;
     }
 
 
@@ -521,10 +536,11 @@ h4 {
 /* Generale per tutti i modali */
 .modal-content {
     border-radius: 10px !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
-    background-color: #fff !important;
+    box-shadow: 0 4px 10px var(--color-shadow-light) !important;
+    background-color: var(--color-white) !important;
     padding: 20px !important;
     transition: transform 0.3s ease, opacity 0.3s ease !important;
+    z-index: 9999 !important;
 }
 
 /* Animazione apertura */
@@ -541,31 +557,47 @@ h4 {
 
 /* Testo del titolo */
 .modal-header {
-    border-bottom: 2px solid #f1f1f1 !important;
-    padding-bottom: 10px !important;
-    margin-bottom: 20px !important;
+    position: relative; /* Necessario per il posizionamento assoluto della pseudo-classe */
+    padding-bottom: 10px; /* Spazio per il bordo inferiore */
+    border-bottom: none !important;
 }
+    .modal-header::after {
+        content: ""; /* Necessario per creare un elemento */
+        position: absolute;
+        bottom: 0; /* Posiziona il bordo alla parte inferiore */
+        left: 0;
+        width: 100%;
+        height: 4px; /* Altezza del "bordo" */
+        background: linear-gradient(90deg, var(--color-tertiary), var(--color-quaternary), var(--color-secondary));
+        background-size: 400% 400%;
+        animation: gradient-rotation 12s infinite linear;
+    }
 
 .modal-title {
     font-size: 1.25rem !important;
     font-weight: bold !important;
-    color: #333 !important;
+    color: var(--color-text-dark) !important;
 }
 
 /* Icona chiudi */
 .close {
     font-size: 1.5rem !important;
-    color: #888 !important;
+    color: var(--color-placeholder) !important;
     text-shadow: none !important;
 }
 
     .close:hover, .close:focus {
-        color: #000 !important;
+        color: var(--color-text-dark) !important;
     }
+
+button.close {
+    border: none !important;
+    background: none;
+}
 
 /* Corpo del modal */
 .modal-body {
-    padding-top: 0 !important;
+    padding-top: 20px !important;
 }
 
     .modal-body p {
@@ -579,7 +611,7 @@ h4 {
     display: flex !important;
     justify-content: space-between !important;
     padding: 10px !important;
-    border-top: 1px solid #f1f1f1 !important;
+    border-top: none !important;
 }
 
     .modal-footer button {
@@ -594,9 +626,9 @@ h4 {
         }
 
 .btn-secondary {
-    background-color: #f1f1f1 !important;
-    color: #333 !important;
-    border: 1px solid #ddd !important;
+    background-color: var(--color-background-light) !important;
+    color: var(--color-text-dark) !important;
+    border: 1px solid var(--color-border) !important;
 }
 
     .btn-secondary:hover {
@@ -604,8 +636,8 @@ h4 {
     }
 
 .btn-danger {
-    background-color: #f44336 !important;
-    color: white !important;
+    background-color: var(--color-danger-bg) !important;
+    color: var(--color-danger-text) !important;
     border: none !important;
 }
 
@@ -615,7 +647,7 @@ h4 {
 
 .btn-primary {
     background-color: #007bff !important;
-    color: white !important;
+    color: var(--color-white) !important;
     border: none !important;
 }
 
@@ -626,14 +658,14 @@ h4 {
 /* Input e form */
 .form-control {
     border-radius: 5px !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--color-border) !important;
     padding: 10px !important;
     font-size: 1rem !important;
     transition: border-color 0.3s ease !important;
 }
 
     .form-control:focus {
-        border-color: #9f78c1 !important;
+        border-color: var(--color-border-focus) !important;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.3) !important;
     }
 
@@ -644,11 +676,74 @@ textarea.form-control {
 /* Etichette */
 label {
     font-weight: 600 !important;
-    color: #333 !important;
+    color: var(--color-text-dark) !important;
 }
 
 /* Modal Dialog */
 .modal-dialog {
     max-width: 500px !important;
     margin: 30px auto !important;
+}
+
+.modal-backdrop {
+    z-index: 999 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+/* Animazione del gradiente */
+@keyframes gradient-rotation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Stile del pulsante */
+.btn-gradient {
+    background: linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-middle), var(--color-gradient-end));
+    background-size: 400% 400%; /* Per consentire il movimento del gradiente */
+    animation: gradientAnim 4s infinite linear; /* Animazione del gradiente */
+    color: var(--color-text-dark) !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    padding: 12px 18px !important; /* Spaziatura interna */
+    border-radius: 50px !important; /* Arrotondamento del pulsante */
+    cursor: pointer !important; /* Cambia il cursore al passaggio */
+}
+
+    /* Effetto hover */
+    .btn-gradient:hover {
+        border: 2px solid !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important; /* Ombreggiatura */
+    }
+
+.empty-appointments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+    .empty-appointments i {
+        font-size: 3rem;
+        color: #6c757d;
+    }
+
+    .empty-appointments p {
+        font-size: 1.25rem;
+        color: #6c757d;
+    }
+
+.rounded{
+    border-radius: 0.5rem !important;
 }

@@ -24,7 +24,7 @@ namespace ClickClok.Helpers
         }
 
         // Metodo per recuperare una stringa dalla sessione
-        public static string GetString(ISession session, string key)
+        public static string? GetString(ISession session, string key)
         {
             return session.GetString(key);
         }

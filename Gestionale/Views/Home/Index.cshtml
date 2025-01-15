@@ -16,8 +16,9 @@
 </div>
 
 <div class="container">
-	<h1 class="text-center">DASHBOARD</h1>
-	<div class="ms-lg-5">
+	<h1 id="dashboard-title" class="text-center">DASHBOARD</h1>
+	<div class="d-flex justify-content-between align-items-center p-2">
+		<!-- Messaggio di benvenuto -->
 		<h4>Benvenuto, @ViewData["UserName"]!</h4>
 
 		<!-- Visualizza l'ID utente memorizzato nella sessione -->
@@ -30,11 +31,12 @@
 			<p>@ViewBag.ErrorMessage</p>
 		}
 
+		<!-- Bottone per creare appuntamento -->
 		<button id="openCreateModal" class="btn-create">
 			<i class="fas fa-calendar-plus"></i> Crea Appuntamento
 		</button>
-
 	</div>
+
 
 	<!-- Contenitore per gli alert -->
 	<div id="alert-container" class="position-fixed top-0 start-50 translate-middle-x mt-3 w-50">
@@ -44,59 +46,74 @@
 	<!-- Carosello per gli appuntamenti -->
 	<div id="appointmentCarousel" class="carousel slide mt-4" data-ride="false" data-interval="false">
 		<div class="carousel-inner">
-			@for (var i = 0; i < Model.Count; i += 6)
+			@if (Model.Count == 0)
 			{
-				<div class="carousel-item @(i == 0 ? "active" : "")">
-					<div class="row m-auto p-4">
-						@for (var j = i; j < Math.Min(i + 6, Model.Count); j++)
-						{
-							var appointment = Model[j];
-							<div class="col-md-4 mb-3 ">
-								<div class="card shadow-sm appointment-card" data-id="@appointment.AppointmentId">
-									<div class="card-body">
-										<h5 class="card-title">@appointment.Description</h5>
-										<div class="appointment-info">
-											<div class="appointment-detail">
-												<span class="label">Data</span>
-												@appointment.AppointmentTime.ToShortDateString()
-											</div>
-											<div class="appointment-detail">
-												<span class="label">Orario</span>
-												@appointment.AppointmentTime.ToString("HH:mm")
-											</div>
-										</div>
-
-										<div class="appointment-detail">
-											<span class="label">Dettagli</span>
-											<div class="overflow-hidden">@appointment.Details</div>
-										</div>
-
-
-
-										<div class="action-buttons">
-											<button type="button" class="btn btn-warning btn-sm edit-btn"
-													data-id="@appointment.AppointmentId"
-													data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
-													data-description="@appointment.Description"
-													data-details="@appointment.Details">
-												<i class="fas fa-edit"></i> Modifica
-											</button>
-											<button type="button" class="btn btn-danger btn-sm delete-btn"
-													data-id="@appointment.AppointmentId"
-													data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
-													data-description="@appointment.Description"
-													data-details="@appointment.Details">
-												<i class="fas fa-trash-alt"></i> Elimina
-											</button>
-										</div>
-									</div>
-								</div>
+				<div class="carousel-item active">
+					<div class="row justify-content-center m-auto p-4">
+						<div class="col-12 text-center">
+							<!-- Icona Calendario vuoto e messaggio di placeholder -->
+							<div class="empty-appointments mt-5">
+								<i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+								<p class="h5 text-muted">Non sono presenti appuntamenti</p>
 							</div>
-						}
+						</div>
 					</div>
 				</div>
 			}
+			@{
+				for (var i = 0; i < Model.Count; i += 6)
+				{
+					<div class="carousel-item @(i == 0 ? "active" : "")">
+						<div class="row m-auto p-4">
+							@for (var j = i; j < Math.Min(i + 6, Model.Count); j++)
+							{
+								var appointment = Model[j];
+								<div class="col-md-4 mb-3 ">
+									<div class="card shadow-sm appointment-card" data-id="@appointment.AppointmentId">
+										<div class="card-body">
+											<h5 class="card-title">@appointment.Description</h5>
+											<div class="appointment-info">
+												<div class="appointment-detail">
+													<span class="label">Data</span>
+													@appointment.AppointmentTime.ToShortDateString()
+												</div>
+												<div class="appointment-detail">
+													<span class="label">Orario</span>
+													@appointment.AppointmentTime.ToString("HH:mm")
+												</div>
+											</div>
+
+											<div class="appointment-detail">
+												<span class="label">Dettagli</span>
+												<div class="overflow-hidden">@appointment.Details</div>
+											</div>
+
+											<div class="action-buttons">
+												<button type="button" class="btn btn-warning btn-sm edit-btn"
+														data-id="@appointment.AppointmentId"
+														data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
+														data-description="@appointment.Description"
+														data-details="@appointment.Details">
+													<i class="fas fa-edit"></i> Modifica
+												</button>
+												<button type="button" class="btn btn-danger btn-sm delete-btn"
+														data-id="@appointment.AppointmentId"
+														data-time="@appointment.AppointmentTime.ToString("yyyy-MM-ddTHH:mm")"
+														data-description="@appointment.Description"
+														data-details="@appointment.Details">
+													<i class="fas fa-trash-alt"></i> Elimina
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				}
+			}
 		</div>
+
 		<!-- Paginazione -->
 		<ol class="carousel-indicators mt-5">
 			@foreach (var group in Model.Select((value, index) => new { value, index })
@@ -114,9 +131,6 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title">Conferma Eliminazione</h5>
-				<button type="button" class="close" id="closeModal" aria-label="Chiudi">
-					<span aria-hidden="true">&times;</span>
-				</button>
 			</div>
 			<div class="modal-body">
 				<p>Sei sicuro di voler eliminare questo appuntamento?</p>
@@ -160,8 +174,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" id="cancelCreate">Annulla</button>
-				<button type="button" class="btn btn-primary" id="confirmCreate">Crea</button>
+				<button type="button" class="btn btn-gradient m-auto" id="confirmCreate">Crea</button>
 			</div>
 		</div>
 	</div>
@@ -192,8 +205,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" id="cancelEdit">Annulla</button>
-				<button type="button" class="btn btn-primary" id="confirmEdit">Salva modifiche</button>
+				<button type="button" class="btn btn-gradient m-auto" id="confirmEdit">Salva modifiche</button>
 			</div>
 		</div>
 	</div>

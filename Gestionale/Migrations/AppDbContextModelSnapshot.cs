@@ -35,14 +35,9 @@ namespace Gestionale.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("AppointmentId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Appointments");
                 });
@@ -76,16 +71,17 @@ namespace Gestionale.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Salt")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT COLLATE NOCASE");
 
                     b.HasKey("UserId");
 
@@ -95,14 +91,10 @@ namespace Gestionale.Migrations
             modelBuilder.Entity("ClickClok.Models.Appointment", b =>
                 {
                     b.HasOne("ClickClok.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ClickClok.Models.User", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });

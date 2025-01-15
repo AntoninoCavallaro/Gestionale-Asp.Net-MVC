@@ -4,6 +4,8 @@ using System.Linq;
 using ClickClok.Models;
 using ClickClok.Helpers;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
+using Gestionale.Models;
 
 namespace AppointmentManager.Controllers
 {
@@ -16,6 +18,66 @@ namespace AppointmentManager.Controllers
         {
             _context = context;
         }
+
+        [HttpPost]
+        public IActionResult Register([FromBody] RegisterModel model)
+        {
+            try
+            {
+                Debug.WriteLine("Inizio del metodo Register");
+
+                // Logga i dati ricevuti
+                Debug.WriteLine($"Username ricevuto: '{model.Username}'");
+                Debug.WriteLine($"Password ricevuta: '{model.Password}'");
+
+                // Verifica che i campi username e password non siano vuoti
+                if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
+                {
+                    Debug.WriteLine("Username o password vuoti");
+                    return Json(new { success = false, message = "I campi username e password sono obbligatori." });
+                }
+
+                // Verifica se l'utente esiste già nel database
+                var existingUser = _context.Users.FirstOrDefault(u => u.Username.ToLower() == model.Username.ToLower());
+                if (existingUser != null)
+                {
+                    Debug.WriteLine("Username già in uso");
+                    return Json(new { success = false, message = "Username già in uso." });
+                }
+
+                // Genera un salt univoco per l'utente
+                var salt = Guid.NewGuid().ToString();
+                Debug.WriteLine($"Salt generato: {salt}");
+
+                // Calcola l'hash della password combinata con il salt
+                var hashedPassword = PasswordHelper.HashPassword(model.Password, salt);
+                Debug.WriteLine($"Password hashata: {hashedPassword}");
+
+                // Crea un nuovo utente
+                var newUser = new User
+                {
+                    Username = model.Username,
+                    Salt = salt,
+                    Password = hashedPassword
+                };
+
+                // Aggiungi il nuovo utente al database
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+                Debug.WriteLine("Nuovo utente salvato nel database");
+
+                // Restituisce una risposta positiva in formato JSON
+                return Json(new { success = true, message = "Registrazione avvenuta con successo. Puoi ora effettuare il login." });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Errore durante la registrazione: {ex.Message}");
+                return Json(new { success = false, message = "Si è verificato un errore durante la registrazione. Riprovare." });
+            }
+        }
+
+
+
 
         // Metodo GET per visualizzare la pagina di login
         public IActionResult Login()
@@ -48,6 +110,7 @@ namespace AppointmentManager.Controllers
             return View();
         }
 
+
         // Metodo POST per il login
         [HttpPost]
         public IActionResult Login(string name, string password)
@@ -57,52 +120,93 @@ namespace AppointmentManager.Controllers
                 // Verifica che i campi username e password non siano vuoti
                 if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
                 {
+                    Debug.WriteLine($"[DEBUG] Tentativo di login con campi vuoti: Username = {name}, Password = {password}");
                     ViewBag.ErrorMessage = "I campi username e password sono obbligatori.";
                     return View("Login");
                 }
 
-                // Cerca l'utente nel database
-                var user = _context.Users.FirstOrDefault(u =>
-                    u.Username.ToLower() == name.ToLower() && u.Password == password);
+                // Log dei dati in ingresso
+                Debug.WriteLine($"[DEBUG] Tentativo di login: Username = {name}, Password = {password}");
 
-                // Se l'utente esiste, crea una sessione
+                // Cerca l'utente nel database, ignorando maiuscole/minuscole nel nome utente
+                var user = _context.Users.FirstOrDefault(u =>
+                    u.Username.ToLower() == name.ToLower());
+
+                // Log dell'utente trovato (o null)
                 if (user != null)
                 {
-                    var session = new Session
-                    {
-                        UserID = user.UserId,
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    _context.Sessions.Add(session);
-                    _context.SaveChanges();
-
-                    // Imposta il cookie di sessione
-                    Response.Cookies.Append("SessionToken", session.SessionToken, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        IsEssential = true,
-                        Expires = DateTime.UtcNow.AddDays(1)
-                    });
-
-                    // Imposta i dati della sessione
-                    HttpContext.Session.SetInt32("UserId", user.UserId);
-                    HttpContext.Session.SetString("Username", user.Username);
-
-                    return RedirectToAction("Index", "Home");
+                    Debug.WriteLine($"[DEBUG] Utente trovato: {user.Username}, Salt = {user.Salt}");
+                }
+                else
+                {
+                    Debug.WriteLine("[DEBUG] Utente non trovato.");
                 }
 
-                // Se le credenziali sono errate, mostra un messaggio di errore
+                // Se l'utente esiste, controlla la password
+                if (user != null)
+                {
+                    // Hash la password inserita usando il salt dell'utente
+                    var hashedPassword = PasswordHelper.HashPassword(password, user.Salt);
+
+                    // Log dell'hash calcolato
+                    Debug.WriteLine($"[DEBUG] Hash della password inserita: {hashedPassword}");
+
+                    // Confronta l'hash della password inserita con quello nel database
+                    if (hashedPassword == user.Password)
+                    {
+                        Debug.WriteLine($"[DEBUG] Password corretta per l'utente: {user.Username}");
+
+                        // Se l'hash corrisponde, crea una sessione
+                        var session = new Session
+                        {
+                            UserID = user.UserId,
+                            CreatedAt = DateTime.UtcNow
+                        };
+
+                        _context.Sessions.Add(session);
+                        _context.SaveChanges();
+
+                        // Imposta il cookie di sessione
+                        Response.Cookies.Append("SessionToken", session.SessionToken, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            IsEssential = true,
+                            Expires = DateTime.UtcNow.AddDays(1)
+                        });
+
+                        // Imposta i dati della sessione
+                        HttpContext.Session.SetInt32("UserId", user.UserId);
+                        HttpContext.Session.SetString("Username", user.Username);
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("[DEBUG] Hash non corrisponde. Credenziali errate.");
+
+                        // Se l'hash non corrisponde, mostra un messaggio di errore
+                        ViewBag.ErrorMessage = "Credenziali errate!";
+                        return View("Login");
+                    }
+                }
+
+                // Se l'utente non esiste, mostra un messaggio di errore
+                Debug.WriteLine("[DEBUG] L'utente non esiste nel database.");
                 ViewBag.ErrorMessage = "Credenziali errate!";
                 return View("Login");
             }
-            catch
+            catch (Exception ex)
             {
+                // Log dell'eccezione se c'è un errore
+                Debug.WriteLine($"[ERROR] Errore durante il login: {ex.Message}");
+
                 // Se si verifica un errore, mostra un messaggio di errore generico
                 ViewBag.ErrorMessage = "Si è verificato un errore. Riprovare.";
                 return View("Login");
             }
         }
+
+
 
         // Metodo per il logout dell'utente
         [HttpPost]

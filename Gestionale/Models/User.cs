@@ -5,9 +5,9 @@
         public int UserId { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
-        public bool IsPaid { get; set; }
+        public string Salt { get; set; } = Guid.NewGuid().ToString(); // Genera un salt univoco
 
-        // Aggiungi questa proprietà per navigare attraverso gli appuntamenti associati
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>(); // Assicurati che sia una collezione
+        // Relazione con gli appuntamenti
+        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

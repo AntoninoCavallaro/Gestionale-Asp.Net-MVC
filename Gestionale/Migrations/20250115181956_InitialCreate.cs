@@ -17,9 +17,9 @@ namespace Gestionale.Migrations
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Username = table.Column<string>(type: "TEXT", nullable: false),
+                    Username = table.Column<string>(type: "TEXT COLLATE NOCASE", nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
-                    IsPaid = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Salt = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,8 +35,7 @@ namespace Gestionale.Migrations
                     AppointmentTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Details = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId1 = table.Column<int>(type: "INTEGER", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,11 +46,6 @@ namespace Gestionale.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Appointments_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -79,11 +73,6 @@ namespace Gestionale.Migrations
                 name: "IX_Appointments_UserId",
                 table: "Appointments",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appointments_UserId1",
-                table: "Appointments",
-                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sessions_UserID",
